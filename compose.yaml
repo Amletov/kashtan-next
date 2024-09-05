@@ -1,0 +1,20 @@
+version: "4.5"
+
+services:
+  pg:
+    image: postgres:14.13-alpine3.20
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_PORT=${DB_PORT}
+      - PORGRES_DB=${DB_NAME}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - ${DB_PORT}:5432
+
+volumes:
+  pg_data:

@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model City {
+  id        String        @id @default(uuid())
+  name      String        @unique
+  agencies  Agency[]
+  clients   Client[]
+
+  @@map("cities")
+}
+
+model ProperyType {
+  id        String        @id @default(uuid())
+  name      String        @unique
+  agencies  Agency[]
+  
+  @@map("property_types")
+}
+
+model PaymentForm {
+  id        String        @id @default(uuid())
+  name      String        @unique
+
+  @@map("payment_forms")
+}
+
+model Product {
+  id              String        @id @default(uuid())
+  name            String        @unique
+  price           Int           
+  orders          Order[]
+  agencyProducts  AgencyProduct[]
+
+  @@map("products")
+}
+
+model AgencyProduct {
+  id        String        @id @default(uuid())
+  agencyId  String        @map("agency_id")
+  productId String        @map("product_id")
+  agency    Agency        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  product   Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("agency_poducts")
+}
+
+
+model Agency {
+  id              String          @id @default(uuid())
+  name            String          @unique
+  cityId          String          @map("city_id")
+  propertyId      String          @map("property_type_id") 
+  city            City            @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  property        ProperyType     @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  year            Int 
+  paymentAccount  Int             @map("payment_Account")
+  agencyProducts  AgencyProduct[] 
+
+  @@map("agencies")
+}
+
+model Client {
+  id        String        @id @default(uuid())
+  name      String        @unique
+  adress    String        @unique
+  phone     String
+  cityId    String        @map("city_id")
+  city      City          @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  orders    Order[]
+
+  @@map("clients")
+}
+
+model Order {
+  id        String        @id @default(uuid())
+  clientId  String        @map("client_id")
+  productId String        @map("product_id") 
+  client    Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  product   Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("orders")
+}
+
