@@ -16,7 +16,7 @@ model City {
   @@map("cities")
 }
 
-model ProperyType {
+model PropertyType {
   id        String        @id @default(uuid())
   name      String        @unique
   agencies  Agency[]
@@ -27,6 +27,7 @@ model ProperyType {
 model PaymentForm {
   id        String        @id @default(uuid())
   name      String        @unique
+  orders    Order[]
 
   @@map("payment_forms")
 }
@@ -34,8 +35,6 @@ model PaymentForm {
 model Product {
   id              String        @id @default(uuid())
   name            String        @unique
-  price           Int           
-  orders          Order[]
   agencyProducts  AgencyProduct[]
 
   @@map("products")
@@ -45,8 +44,10 @@ model AgencyProduct {
   id        String        @id @default(uuid())
   agencyId  String        @map("agency_id")
   productId String        @map("product_id")
+  price     Float
   agency    Agency        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   product   Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  oreders   Order[]
 
   @@map("agency_poducts")
 }
@@ -56,12 +57,14 @@ model Agency {
   id              String          @id @default(uuid())
   name            String          @unique
   cityId          String          @map("city_id")
-  propertyId      String          @map("property_type_id") 
+  propertyTypeId  String          @map("property_type_id") 
   city            City            @relation(fields: [cityId], references: [id], onDelete: Cascade)
-  property        ProperyType     @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  property        PropertyType    @relation(fields: [propertyTypeId], references: [id], onDelete: Cascade)
   year            Int 
   paymentAccount  Int             @map("payment_Account")
   agencyProducts  AgencyProduct[] 
+  users           User[]
+  orders          Order[]
 
   @@map("agencies")
 }
@@ -79,12 +82,28 @@ model Client {
 }
 
 model Order {
-  id        String        @id @default(uuid())
-  clientId  String        @map("client_id")
-  productId String        @map("product_id") 
-  client    Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  product   Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id              String        @id @default(uuid())
+  clientId        String        @map("client_id")
+  agencyId        String        @map("agency_id")
+  agencyProductId String        @map("agency_product_id")
+  paymentFormId   String        @map("payment_form_id")
+  amount          Int
+  created         DateTime
+  completed       DateTime?     
+  client          Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  agency          Agency        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agencyProduct   AgencyProduct @relation(fields: [agencyProductId], references: [id], onDelete: Cascade)
+  paymentForm     PaymentForm   @relation(fields: [paymentFormId], references: [id], onDelete: Cascade)
 
   @@map("orders")
 }
 
+model User {
+  id          String    @id @default(uuid())
+  login       String    @unique
+  role        String
+  agencyId    String    @map("agency_id")
+  agencies    Agency  @relation(fields: [agencyId], references: [id])
+
+  @@map("users")
+}

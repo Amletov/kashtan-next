@@ -9,11 +9,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Client } from "@/models/tables/client";
-// import { City } from "@/models/references/city";
-// import AddCityDialog from "@/components/references/add-city-dialog";
-// import DeleteCityDialog from "./delete-city-dialog";
-// import UpdateCityDialog from "./update-city-dialog";
+import { Client } from "@/models/client";
+import AddClientDialog from "@/components/tables/add/add-client-dialog";
+import Link from "next/link";
+import DeleteDialog from "@/components/delete-dialog";
+import EditClientDialog from "./edit/edit-client-dialog";
 
 type Props = {
   clients: Client[] | undefined;
@@ -30,7 +30,7 @@ export default function ClientTable({ clients, total }: Props) {
       ) : (
         <Table>
           <TableCaption>
-            {/* Всего записей: {total}. <AddCityDialog /> */}
+            Всего записей: {total}. <AddClientDialog />
           </TableCaption>
           <TableHeader>
             <TableHead className="w-[350px]">ИД</TableHead>
@@ -38,20 +38,23 @@ export default function ClientTable({ clients, total }: Props) {
             <TableHead>Город</TableHead>
             <TableHead>Адрес</TableHead>
             <TableHead>Телефон</TableHead>
+            <TableHead>Заказы</TableHead>
             <TableHead>Действия</TableHead>
           </TableHeader>
           <TableBody>
             {clients.map((client) => (
               <TableRow key={client.id}>
-                <TableCell className="text-sm">{client.id}</TableCell>
+                <TableCell className="text-sm">
+                  <Link href={`/clients/${client.id}`}>{client.id}</Link>
+                </TableCell>
                 <TableCell>{client.name}</TableCell>
                 <TableCell>{client.city.name}</TableCell>
                 <TableCell>{client.adress}</TableCell>
                 <TableCell>{client.phone}</TableCell>
-                {/* <TableCell>{client.orders.length}</TableCell> */}
+                <TableCell>{client.orders.length}</TableCell>
                 <TableCell>
-                  {/* <UpdateCityDialog city={city} />
-                  <DeleteCityDialog id={city.id}/> */}
+                  <EditClientDialog id={client.id} client={client}/>
+                  <DeleteDialog id={client.id} table="clients" />
                 </TableCell>
               </TableRow>
             ))}

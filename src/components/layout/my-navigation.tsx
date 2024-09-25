@@ -11,66 +11,94 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import Dashboard from "../dashboard";
 
-const components: { title: string; href: string; description: string }[] = [
+const references: { title: string; href: string; description: string }[] = [
   {
     title: "Города",
-    href: "/сities",
-    description:
-      "Справочник городов.",
+    href: "http://localhost:3000/cities",
+    description: "Справочник городов.",
   },
   {
     title: "Типы собственности",
-    href: "/property_types",
-    description:
-      "Справочник типов собственности.",
+    href: "http://localhost:3000/property_types",
+    description: "Справочник типов собственности.",
   },
   {
     title: "Продукция",
-    href: "/products",
-    description:
-      "Справочник продукции.",
+    href: "http://localhost:3000/products",
+    description: "Справочник продукции.",
   },
   {
     title: "Типы платежа",
-    href: "/payment_forms",
-    description:
-      "Справочник типов платежей.",
+    href: "http://localhost:3000/payment_forms",
+    description: "Справочник типов платежей.",
   },
-]
+];
 
-export default function MyNavigation() {
+const tables: { title: string; href: string; description: string }[] = [
+  {
+    title: "Агенства",
+    href: "http://localhost:3000/agencies",
+    description: "Таблица агенств.",
+  },
+  {
+    title: "Продукция агенств",
+    href: "http://localhost:3000/agency_products",
+    description: "Таблица продукции агенств.",
+  },
+  {
+    title: "Клиенты",
+    href: "http://localhost:3000/clients",
+    description: "Таблица клиентов рекламных агенств.",
+  },
+  {
+    title: "Заказы",
+    href: "http://localhost:3000/orders",
+    description: "Таблица заказов клиентов.",
+  },
+  {
+    title: "Пользователи",
+    href: "http://localhost:3000/users",
+    description: "Таблица пользователей БД.",
+  },
+];
+
+export default function Navigation() {
   return (
     <header className="flex justify-between p-2">
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <Link href="/" legacyBehavior passHref>
+            <Link href="/queries" legacyBehavior passHref>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Главная
+                Зарпосы
               </NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href="/tickets" legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Таблицы
-              </NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger>
-              Справочники
-            </NavigationMenuTrigger>
+            <NavigationMenuTrigger>Таблицы</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                {components.map((component) => (
+                {tables.map((table) => (
                   <ListItem
-                    key={component.title}
-                    title={component.title}
-                    href={component.href}
+                    key={table.title}
+                    title={table.title}
+                    href={table.href}
                   >
-                    {component.description}
+                    {table.description}
+                  </ListItem>
+                ))}
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>Справочники</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                {references.map((ref) => (
+                  <ListItem key={ref.title} title={ref.title} href={ref.href}>
+                    {ref.description}
                   </ListItem>
                 ))}
               </ul>
@@ -78,11 +106,7 @@ export default function MyNavigation() {
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      <Button disabled>
-        <Link href="/authorization" legacyBehavior passHref>
-          Вход
-        </Link>
-      </Button>
+      <Dashboard />
     </header>
   );
 }
@@ -109,6 +133,6 @@ const ListItem = React.forwardRef<
         </a>
       </NavigationMenuLink>
     </li>
-  )
-})
-ListItem.displayName = "ListItem"
+  );
+});
+ListItem.displayName = "ListItem";

@@ -1,5 +1,14 @@
 import { PrismaClient } from "@prisma/client";
+import { db } from "@/config/globals";
 
-const prisma = new PrismaClient();
+export const login = async (login: string, password: string) => {
+  return new PrismaClient({
+    datasourceUrl: `postgresql://${login}:${password}@localhost:${db.port}/${db.name}?schema=public`,
+  });
+};
 
-export default prisma;
+// const prisma = new PrismaClient({
+//   datasourceUrl: `postgresql://${db.login}:${db.password}@localhost:${db.port}/${db.name}?schema=public`,
+// });
+
+// export default prisma;

@@ -1,5 +1,8 @@
-import prisma from "@/lib/prisma";
+import { db } from "@/config/globals";
+import { PrismaClient } from "@prisma/client";
 import { NextRequest } from "next/server";
+import { cookies } from "next/headers";
+
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
@@ -7,6 +10,12 @@ export async function GET(req: NextRequest) {
   const take = 20;
   const skip = pageIndex * take;
 
+    const cookieStore = cookies();
+  const authToken = cookieStore.get("auth-token");
+  ;
+  const prisma = new PrismaClient({
+    datasourceUrl: authToken?.value,
+  });
   try {
     const data = await prisma.client.findMany({
       skip: skip,
@@ -14,6 +23,7 @@ export async function GET(req: NextRequest) {
       orderBy: { id: "desc" },
       include: {
         city: true,
+        orders: true,
       },
       where: {
         name: {
@@ -22,11 +32,38 @@ export async function GET(req: NextRequest) {
       },
     });
     const count = await prisma.client.count();
-    console.log(data);
     return new Response(JSON.stringify({ clients: data, total: count }), {
       status: 200,
     });
   } catch (error) {
+    console.log(error);
+    return new Response(JSON.stringify({ error: "Error: " + error }), {
+      status: 500,
+    });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+    const cookieStore = cookies();
+  const authToken = cookieStore.get("auth-token");
+  ;
+  const prisma = new PrismaClient({
+    datasourceUrl: authToken?.value,
+  });
+  try {
+    const { name, cityId, adress, phone } = body;
+    const data = await prisma.client.create({
+      data: {
+        name,
+        cityId,
+        adress,
+        phone,
+      },
+    });
+    return new Response(JSON.stringify({ client: data }), { status: 201 });
+  } catch (error) {
+    console.log(error);
     return new Response(JSON.stringify({ error: "Error: " + error }), {
       status: 500,
     });

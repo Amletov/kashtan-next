@@ -9,10 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { City } from "@/models/references/city";
-import AddCityDialog from "@/components/references/add-city-dialog";
-import DeleteCityDialog from "./delete-city-dialog";
-import UpdateCityDialog from "./update-city-dialog";
+import { City } from "@/models/city";
+import AddDialog from "@/components/references/ref-create-dialog";
+import PutDialog from "@/components/references/ref-put-dialog";
+import DeleteDialog from "@/components/delete-dialog";
 
 type Props = {
   cities: City[] | undefined;
@@ -29,7 +29,7 @@ export default function CityTable({ cities, total }: Props) {
       ) : (
         <Table>
           <TableCaption>
-            Всего записей: {total}. <AddCityDialog />
+            Всего записей: {total}. <AddDialog table="cities"/>
           </TableCaption>
           <TableHeader>
             <TableHead className="w-[350px]">ИД</TableHead>
@@ -42,8 +42,8 @@ export default function CityTable({ cities, total }: Props) {
                 <TableCell className="text-sm">{city.id}</TableCell>
                 <TableCell>{city.name}</TableCell>
                 <TableCell>
-                  <UpdateCityDialog city={city} />
-                  <DeleteCityDialog id={city.id}/>
+                  <PutDialog id={city.id} table="cities" />
+                  <DeleteDialog id={city.id} table="cities"/>
                 </TableCell>
               </TableRow>
             ))}

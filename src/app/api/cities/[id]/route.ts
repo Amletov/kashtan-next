@@ -1,5 +1,8 @@
-import prisma from "@/lib/prisma";
+import { db } from "@/config/globals";
+import { PrismaClient } from "@prisma/client";
 import { NextRequest } from "next/server";
+import { cookies } from "next/headers";
+
 
 export async function DELETE(
   req: NextRequest,
@@ -7,6 +10,12 @@ export async function DELETE(
 ) {
   const { id } = params;
 
+    const cookieStore = cookies();
+  const authToken = cookieStore.get("auth-token");
+  ;
+  const prisma = new PrismaClient({
+    datasourceUrl: authToken?.value,
+  });
   try {
     await prisma.city.delete({ where: { id: id } });
     prisma.city.update;
@@ -18,12 +27,22 @@ export async function DELETE(
   }
 }
 
-export async function PUT(req: NextRequest) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const body = await req.json();
 
+    const cookieStore = cookies();
+  const authToken = cookieStore.get("auth-token");
+  ;
+  const prisma = new PrismaClient({
+    datasourceUrl: authToken?.value,
+  });
   try {
     const { name } = body;
-    await prisma.city.update({ where: { id: body.id }, data: { name: name } });
+    const { id } = params;
+    await prisma.city.update({ where: { id: id }, data: { name: name } });
     return new Response(JSON.stringify({ name: name }), { status: 200 });
   } catch (error) {
     return new Response(JSON.stringify({ error: "Error: " + error }), {
