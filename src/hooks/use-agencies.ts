@@ -16,7 +16,7 @@ export function useAgencies(pageIndex: number, name: string) {
 
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: ["agencies"] });
-  }, [pageIndex, name]);
+  }, [pageIndex, name, queryClient]);
 
   const totalPages = data ? Math.ceil(data.total / 20) : 0;
 
